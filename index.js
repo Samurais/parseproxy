@@ -106,10 +106,24 @@ ParseProxy.prototype.createMessageInbound = function*(obj) {
  * subscribeMessageOutbound
  * http://parseplatform.github.io/docs/js/guide/#live-queries
  * @param {[type]} handler       [description]
+ * @param {[array]} filters       [description]
  * @yield {[type]} [description]
  */
-ParseProxy.prototype.subscribeMessageOutbound = function(handler) {
+ParseProxy.prototype.subscribeMessageOutbound = function(handler, filters) {
     let query = new Parse.Query('MessageOutbound');
+    if (filters) {
+        _.each(filters, function(val, index) {
+            console.log(index, val)
+            switch (val.ref) {
+                case 'equalTo':
+                    query.equalTo(val.key, val.value);
+                    break;
+                default:
+                    debug('not Implemented.');
+                    break;
+            }
+        });
+    }
     let subscription = query.subscribe();
     subscription.on('open', () => {
         debug('MessageInbound', 'subscription opened');
@@ -117,7 +131,6 @@ ParseProxy.prototype.subscribeMessageOutbound = function(handler) {
 
     subscription.on('create', (message) => {
         debug('onCreate', JSON.stringify(message));
-        let j = message.toJSON();
         if (!handler.onCreate) throw new Error('handler.onCreate does not exist.');
         // {
         //   "Channel": "dashboard",
@@ -128,10 +141,10 @@ ParseProxy.prototype.subscribeMessageOutbound = function(handler) {
         //   "textMessage": "foo",
         //   "objectId": "18mRFSRH4X"
         // }
-        if (ObjectHasKeys(j, ['fromUserId', 'type'])) {
+        if (ObjectHasKeys(message.toJSON(), ['toUserId', 'type'])) {
             handler.onCreate(message);
         } else {
-            debug('onCreate', 'discard message', j);
+            debug('onCreate', 'discard message', message);
         }
     });
 
