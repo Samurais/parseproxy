@@ -113,7 +113,6 @@ ParseProxy.prototype.subscribeMessageOutbound = function(handler, filters) {
     let query = new Parse.Query('MessageOutbound');
     if (filters) {
         _.each(filters, function(val, index) {
-            console.log(index, val)
             switch (val.ref) {
                 case 'equalTo':
                     query.equalTo(val.key, val.value);
@@ -202,8 +201,21 @@ ParseProxy.prototype.getParseObject = function(className) {
  * @param  {[type]} className [description]
  * @return {[type]}           [description]
  */
-ParseProxy.prototype.getParseQuery = function(classInst) {
-    return new Parse.Query(classInst);
+ParseProxy.prototype.getParseQuery = function(classInst, filters) {
+    let query = new Parse.Query(classInst);
+    if (filters) {
+        _.each(filters, function(val, index) {
+            switch (val.ref) {
+                case 'equalTo':
+                    query.equalTo(val.key, val.value);
+                    break;
+                default:
+                    debug('not Implemented.');
+                    break;
+            }
+        });
+    }
+    return query;
 }
 
 exports = module.exports = new ParseProxy();
