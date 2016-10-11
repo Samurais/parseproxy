@@ -115,7 +115,7 @@ ParseProxy.prototype.subscribeMessageOutbound = function(handler, filters) {
         _.each(filters, function(val, index) {
             switch (val.ref) {
                 case 'equalTo':
-                    query.equalTo(val.key, val.value);
+                    query.equalTo(val.key, val.val);
                     break;
                 default:
                     debug('not Implemented.');
@@ -197,6 +197,14 @@ ParseProxy.prototype.getParseObject = function(className) {
 }
 
 /**
+ * get Parse.User
+ * @return {[type]} [description]
+ */
+ParseProxy.prototype.getParseUser = function() {
+    return Parse.User;
+}
+
+/**
  * return Parse Query
  * @param  {[type]} className [description]
  * @return {[type]}           [description]
@@ -207,7 +215,7 @@ ParseProxy.prototype.getParseQuery = function(classInst, filters) {
         _.each(filters, function(val, index) {
             switch (val.ref) {
                 case 'equalTo':
-                    query.equalTo(val.key, val.value);
+                    query.equalTo(val.key, val.val);
                     break;
                 default:
                     debug('not Implemented.');
