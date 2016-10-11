@@ -92,11 +92,11 @@ ParseProxy.prototype.subscribeMessageInbound = function(handler) {
  * @param  {[type]} obj [description]
  * @return {[type]}     [description]
  */
-ParseProxy.prototype.createMessageInbound = function*(obj) {
+ParseProxy.prototype.createMessageInbound = function(obj) {
     if (ObjectHasKeys(obj, ['fromUserId', 'type'])) {
         let MessageInbound = Parse.Object.extend("MessageInbound");
         m = new MessageInbound();
-        return yield m.save(obj);
+        return m.save(obj);
     } else {
         throw new Error('Does not match keys.');
     }
@@ -177,11 +177,11 @@ ParseProxy.prototype.subscribeMessageOutbound = function(handler, filters) {
  * @param  {[type]} obj [description]
  * @return {[type]}     [description]
  */
-ParseProxy.prototype.createMessageOutbound = function*(obj) {
+ParseProxy.prototype.createMessageOutbound = function(obj) {
     if (ObjectHasKeys(obj, ['toUserId', 'type'])) {
         let MessageOutbound = Parse.Object.extend("MessageOutbound");
         m = new MessageOutbound();
-        return yield m.save(obj);
+        return m.save(obj);
     } else {
         throw new Error('Does not match keys.');
     }
