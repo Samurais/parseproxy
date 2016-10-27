@@ -18,11 +18,11 @@ function ObjectHasKeys(obj, keys) {
 }
 
 // ParseProxy
-var ParseProxy = function() {
+var ParseProxy = function () {
     this.ready = false;
 }
 
-ParseProxy.prototype.init = function(serverURL, appId, javascriptKey, masterKey) {
+ParseProxy.prototype.init = function (serverURL, appId, javascriptKey, masterKey) {
     // https://parseplatform.github.io/Parse-SDK-JS/api/classes/Parse.html
     Parse.initialize(appId, javascriptKey);
     Parse.serverURL = serverURL;
@@ -35,8 +35,22 @@ ParseProxy.prototype.init = function(serverURL, appId, javascriptKey, masterKey)
  * @param {[type]} handler       [description]
  * @yield {[type]} [description]
  */
-ParseProxy.prototype.subscribeMessageInbound = function(handler) {
+ParseProxy.prototype.subscribeMessageInbound = function (handler, filters) {
     let query = new Parse.Query('MessageInbound');
+    // build query with filters
+    if (filters) {
+        _.each(filters, function (val, index) {
+            switch (val.ref) {
+                case 'equalTo':
+                    query.equalTo(val.key, val.val);
+                    break;
+                default:
+                    debug('not Implemented.');
+                    break;
+            }
+        });
+    }
+    
     let subscription = query.subscribe();
     subscription.on('open', () => {
         debug('MessageInbound', 'subscription opened');
@@ -92,7 +106,7 @@ ParseProxy.prototype.subscribeMessageInbound = function(handler) {
  * @param  {[type]} obj [description]
  * @return {[type]}     [description]
  */
-ParseProxy.prototype.createMessageInbound = function(obj) {
+ParseProxy.prototype.createMessageInbound = function (obj) {
     if (ObjectHasKeys(obj, ['fromUserId', 'type'])) {
         let MessageInbound = Parse.Object.extend("MessageInbound");
         m = new MessageInbound();
@@ -109,10 +123,10 @@ ParseProxy.prototype.createMessageInbound = function(obj) {
  * @param {[array]} filters       [description]
  * @yield {[type]} [description]
  */
-ParseProxy.prototype.subscribeMessageOutbound = function(handler, filters) {
+ParseProxy.prototype.subscribeMessageOutbound = function (handler, filters) {
     let query = new Parse.Query('MessageOutbound');
     if (filters) {
-        _.each(filters, function(val, index) {
+        _.each(filters, function (val, index) {
             switch (val.ref) {
                 case 'equalTo':
                     query.equalTo(val.key, val.val);
@@ -177,7 +191,7 @@ ParseProxy.prototype.subscribeMessageOutbound = function(handler, filters) {
  * @param  {[type]} obj [description]
  * @return {[type]}     [description]
  */
-ParseProxy.prototype.createMessageOutbound = function(obj) {
+ParseProxy.prototype.createMessageOutbound = function (obj) {
     if (ObjectHasKeys(obj, ['toUserId', 'type'])) {
         let MessageOutbound = Parse.Object.extend("MessageOutbound");
         m = new MessageOutbound();
@@ -192,7 +206,7 @@ ParseProxy.prototype.createMessageOutbound = function(obj) {
  * @param  {[type]} className [description]
  * @return {[type]}           [description]
  */
-ParseProxy.prototype.getParseObject = function(className) {
+ParseProxy.prototype.getParseObject = function (className) {
     return Parse.Object.extend(className);
 }
 
@@ -200,7 +214,7 @@ ParseProxy.prototype.getParseObject = function(className) {
  * get Parse.User
  * @return {[type]} [description]
  */
-ParseProxy.prototype.getParseUser = function() {
+ParseProxy.prototype.getParseUser = function () {
     return Parse.User;
 }
 
@@ -209,10 +223,10 @@ ParseProxy.prototype.getParseUser = function() {
  * @param  {[type]} className [description]
  * @return {[type]}           [description]
  */
-ParseProxy.prototype.getParseQuery = function(classInst, filters) {
+ParseProxy.prototype.getParseQuery = function (classInst, filters) {
     let query = new Parse.Query(classInst);
     if (filters) {
-        _.each(filters, function(val, index) {
+        _.each(filters, function (val, index) {
             switch (val.ref) {
                 case 'equalTo':
                     query.equalTo(val.key, val.val);
