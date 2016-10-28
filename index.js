@@ -240,4 +240,10 @@ ParseProxy.prototype.getParseQuery = function (classInst, filters) {
     return query;
 }
 
+//https://parseplatform.github.io/docs/js/guide/#config
+ParseProxy.prototype.getConfig = function(){
+    // return Promise
+    return Parse.Config.get();
+}
+
 exports = module.exports = new ParseProxy();
