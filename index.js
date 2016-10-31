@@ -50,7 +50,7 @@ ParseProxy.prototype.subscribeMessageInbound = function (handler, filters) {
             }
         });
     }
-    
+
     let subscription = query.subscribe();
     subscription.on('open', () => {
         debug('MessageInbound', 'subscription opened');
@@ -99,6 +99,15 @@ ParseProxy.prototype.subscribeMessageInbound = function (handler, filters) {
         if (handler.onClose)
             handler.onClose();
     });
+}
+
+/**
+ * Get MessageInbound by Id.
+ * return Promise
+ */
+ParseProxy.prototype.getMessageInboundById = function (objectId) {
+    let q = new Parse.Query('MessageInbound');
+    return q.get(objectId);
 }
 
 /**
@@ -241,7 +250,7 @@ ParseProxy.prototype.getParseQuery = function (classInst, filters) {
 }
 
 //https://parseplatform.github.io/docs/js/guide/#config
-ParseProxy.prototype.getConfig = function(){
+ParseProxy.prototype.getConfig = function () {
     // return Promise
     return Parse.Config.get();
 }
