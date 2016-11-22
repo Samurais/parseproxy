@@ -52,6 +52,12 @@ function buildFilters(q, filters) {
             case 'containedIn':
                 q.containedIn(val.key, val.val);
                 break;
+            case 'ascending':
+                q.ascending(val.val);
+                break;
+            case 'descending':
+                q.descending(val.val);
+                break;
             default:
                 debug('not Implemented.');
                 break;
