@@ -17,6 +17,49 @@ function ObjectHasKeys(obj, keys) {
     return _.every(keys, _.partial(_.has, obj));
 }
 
+/**
+ * 
+ * @param {any} query
+ * @param {any} filters
+ */
+function buildFilters(q, filters) {
+    _.each(filters, function (val, index) {
+        switch (val.ref) {
+            case 'equalTo':
+                q.equalTo(val.key, val.val);
+                break;
+            case 'notEqualTo':
+                q.notEqualTo(val.key, val.val);
+                break;
+            case 'greaterThan':
+                q.greaterThan(val.key, val.val);
+                break;
+            case 'greaterThanOrEqualTo':
+                q.greaterThanOrEqualTo(val.key, val.val);
+                break;
+            case 'limit':
+                q.limit(val.val);
+                break;
+            case 'skip':
+                q.skip(val.val);
+                break;
+            case 'lessThan':
+                q.lessThan(val.key, val.val);
+                break;
+            case 'lessThanOrEqualTo':
+                q.lessThanOrEqualTo(val.key, val.val);
+                break;
+            case 'containedIn':
+                q.containedIn(val.key, val.val);
+                break;
+            default:
+                debug('not Implemented.');
+                break;
+        }
+    });
+    return q;
+}
+
 // ParseProxy
 var ParseProxy = function () {
     this.ready = false;
@@ -39,16 +82,7 @@ ParseProxy.prototype.subscribeMessageInbound = function (handler, filters) {
     let query = new Parse.Query('MessageInbound');
     // build query with filters
     if (filters) {
-        _.each(filters, function (val, index) {
-            switch (val.ref) {
-                case 'equalTo':
-                    query.equalTo(val.key, val.val);
-                    break;
-                default:
-                    debug('not Implemented.');
-                    break;
-            }
-        });
+        query = buildFilters(query, filters);
     }
 
     let subscription = query.subscribe();
@@ -135,16 +169,7 @@ ParseProxy.prototype.createMessageInbound = function (obj) {
 ParseProxy.prototype.subscribeMessageOutbound = function (handler, filters) {
     let query = new Parse.Query('MessageOutbound');
     if (filters) {
-        _.each(filters, function (val, index) {
-            switch (val.ref) {
-                case 'equalTo':
-                    query.equalTo(val.key, val.val);
-                    break;
-                default:
-                    debug('not Implemented.');
-                    break;
-            }
-        });
+        query = buildFilters(query, filters);
     }
     let subscription = query.subscribe();
     subscription.on('open', () => {
@@ -235,16 +260,7 @@ ParseProxy.prototype.getParseUser = function () {
 ParseProxy.prototype.getParseQuery = function (classInst, filters) {
     let query = new Parse.Query(classInst);
     if (filters) {
-        _.each(filters, function (val, index) {
-            switch (val.ref) {
-                case 'equalTo':
-                    query.equalTo(val.key, val.val);
-                    break;
-                default:
-                    debug('not Implemented.');
-                    break;
-            }
-        });
+        query = buildFilters(query, filters);
     }
     return query;
 }
