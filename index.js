@@ -139,6 +139,7 @@ ParseProxy.prototype.subscribeMessageInbound = function (handler, filters) {
         if (handler.onClose)
             handler.onClose();
     });
+    return subscription;
 }
 
 /**
