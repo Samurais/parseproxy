@@ -225,6 +225,7 @@ ParseProxy.prototype.subscribeMessageOutbound = function (handler, filters) {
         if (handler.onClose)
             handler.onClose();
     });
+    return subscription;
 }
 
 /**
