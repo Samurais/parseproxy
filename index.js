@@ -279,4 +279,11 @@ ParseProxy.prototype.getConfig = function () {
     return Parse.Config.get();
 }
 
+/**
+ * https://parseplatform.github.io/Parse-SDK-JS/api/classes/Parse.Error.html
+ */
+ParseProxy.prototype.getParseError = function(){
+    return Parse.Error
+}
+
 exports = module.exports = new ParseProxy();
