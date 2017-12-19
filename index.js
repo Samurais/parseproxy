@@ -73,7 +73,7 @@ var ParseProxy = function () {
 
 ParseProxy.prototype.init = function (serverURL, appId, javascriptKey, masterKey) {
     // https://parseplatform.github.io/Parse-SDK-JS/api/classes/Parse.html
-    Parse.initialize(appId, javascriptKey);
+    Parse.initialize(appId, javascriptKey, masterKey);
     Parse.serverURL = serverURL;
     this.ready = true;
 }
