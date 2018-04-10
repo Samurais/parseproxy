@@ -171,7 +171,7 @@ ParseProxy.prototype.subscribeMessageOutbound = function (handler, filters) {
     }
     let subscription = query.subscribe();
     subscription.on('open', () => {
-        debug('MessageInbound', 'subscription opened');
+        debug('MessageOutbound', 'subscription opened');
     });
 
     subscription.on('create', (message) => {
