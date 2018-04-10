@@ -73,7 +73,7 @@ var ParseProxy = function () {
 
 ParseProxy.prototype.init = function (serverURL, appId, javascriptKey, masterKey) {
     // https://parseplatform.github.io/Parse-SDK-JS/api/classes/Parse.html
-    Parse.initialize(appId, javascriptKey, masterKey);
+    Parse._initialize(appId, javascriptKey, masterKey);
     Parse.serverURL = serverURL;
     this.ready = true;
 }
@@ -100,16 +100,7 @@ ParseProxy.prototype.subscribeMessageInbound = function (handler, filters) {
         debug('onCreate', JSON.stringify(message));
         let j = message.toJSON();
         if (!handler.onCreate) throw new Error('handler.onCreate does not exist.');
-        // {
-        //   "Channel": "dashboard",
-        //   "createdAt": "2016-10-05T00:44:23.292Z",
-        //   "updatedAt": "2016-10-05T00:44:39.720Z",
-        //   "fromUserId": "foo",
-        //   "type": "textMessage",
-        //   "textMessage": "foo",
-        //   "objectId": "18mRFSRH4X"
-        // }
-        if (ObjectHasKeys(j, ['fromUserId', 'type'])) {
+        if (ObjectHasKeys(j, ['fromUserId', 'channel'])) {
             handler.onCreate(message);
         } else {
             debug('onCreate', 'discard message', j);
@@ -157,7 +148,7 @@ ParseProxy.prototype.getMessageInboundById = function (objectId) {
  * @return {[type]}     [description]
  */
 ParseProxy.prototype.createMessageInbound = function (obj) {
-    if (ObjectHasKeys(obj, ['fromUserId', 'type'])) {
+    if (ObjectHasKeys(obj, ['fromUserId', 'channel'])) {
         let MessageInbound = Parse.Object.extend("MessageInbound");
         m = new MessageInbound();
         return m.save(obj);
@@ -186,16 +177,7 @@ ParseProxy.prototype.subscribeMessageOutbound = function (handler, filters) {
     subscription.on('create', (message) => {
         debug('onCreate', JSON.stringify(message));
         if (!handler.onCreate) throw new Error('handler.onCreate does not exist.');
-        // {
-        //   "Channel": "dashboard",
-        //   "createdAt": "2016-10-05T00:44:23.292Z",
-        //   "updatedAt": "2016-10-05T00:44:39.720Z",
-        //   "fromUserId": "foo",
-        //   "type": "textMessage",
-        //   "textMessage": "foo",
-        //   "objectId": "18mRFSRH4X"
-        // }
-        if (ObjectHasKeys(message.toJSON(), ['toUserId', 'type'])) {
+        if (ObjectHasKeys(message.toJSON(), ['toUserId', 'channel'])) {
             handler.onCreate(message);
         } else {
             debug('onCreate', 'discard message', message);
@@ -234,7 +216,7 @@ ParseProxy.prototype.subscribeMessageOutbound = function (handler, filters) {
  * @return {[type]}     [description]
  */
 ParseProxy.prototype.createMessageOutbound = function (obj) {
-    if (ObjectHasKeys(obj, ['toUserId', 'type'])) {
+    if (ObjectHasKeys(obj, ['toUserId', 'channel'])) {
         let MessageOutbound = Parse.Object.extend("MessageOutbound");
         m = new MessageOutbound();
         return m.save(obj);
